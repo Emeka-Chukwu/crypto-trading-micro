@@ -1,0 +1,5 @@
+projects/db-data/
+db-data/
+db-data
+*.md
+*.env
