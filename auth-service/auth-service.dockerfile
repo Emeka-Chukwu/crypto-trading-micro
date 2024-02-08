@@ -9,8 +9,8 @@ RUN go mod download
 
 COPY . ./
 
-RUN go build -o /auth-services
+RUN go build -o /auth-service
 
 EXPOSE 8080
 
-CMD [ "/auth-services" ]
+CMD [ "/auth-service" ]
