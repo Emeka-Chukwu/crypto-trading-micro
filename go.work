@@ -1,7 +1,16 @@
 go 1.21.4
 
 use (
-	./auths-service
+	auths-services
 	./broker-services
 	./data-retriever-services
+	./listener-services
+	./logger-services
+	./matching-engine-services
+	./notifications-service
+	./payments-services
+	./trade-services
+	./user-services
+	./verification-services
+	./wallet-services
 )
