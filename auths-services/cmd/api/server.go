@@ -4,7 +4,6 @@ import (
 	"auths-services/data"
 	"auths-services/util"
 	"database/sql"
-	"net/http"
 	"os"
 
 	"github.com/opensaucerer/barf"
@@ -32,21 +31,6 @@ func (s *Server) Serve() {
 		os.Exit(1)
 	}
 	subRoutes := barf.RetroFrame("/api/v1")
-	barf.Get("/", func(w http.ResponseWriter, r *http.Request) {
-
-		barf.Response(w).Status(http.StatusOK).JSON(barf.Res{
-			Status:  true,
-			Data:    nil,
-			Message: "Hello World",
-		})
-	})
-	subRoutes.Get("/", func(w http.ResponseWriter, r *http.Request) {
-		barf.Response(w).Status(http.StatusOK).JSON(barf.Res{
-			Status:  true,
-			Data:    nil,
-			Message: "Hello World",
-		})
-	})
 	subRoutes.Post("/auths/register", s.RegisterUser, util.InputValidatorMiddleware[data.AuthsModel])
 	subRoutes.Post("/auths/login", s.LoginUser, util.InputValidatorMiddleware[data.AuthsModel])
 
