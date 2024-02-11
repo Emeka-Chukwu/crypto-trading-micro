@@ -2,6 +2,7 @@ package api
 
 import (
 	"auths-services/data"
+	"auths-services/util"
 	"database/sql"
 	"net/http"
 	"os"
@@ -10,18 +11,18 @@ import (
 )
 
 type Server struct {
-	conn *sql.DB
-	port string
-	repo data.AuthsRepo
-	// config util
+	conn   *sql.DB
+	port   string
+	repo   data.AuthsRepo
+	config util.Config
 }
 
-func NewServer(conn *sql.DB, port string) *Server {
+func NewServer(conn *sql.DB, config util.Config) *Server {
 	repo := data.NewAuthsRepo(conn)
-	return &Server{conn: conn, port: port, repo: repo}
+	return &Server{conn: conn, port: "7050", repo: repo, config: config}
 }
 
-func (s *Server) Sevre() {
+func (s *Server) Serve() {
 	if err := barf.Stark(barf.Augment{
 		Port:     s.port,
 		Logging:  barf.Allow(),
