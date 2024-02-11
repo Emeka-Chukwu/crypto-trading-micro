@@ -47,6 +47,8 @@ func (s *Server) Serve() {
 			Message: "Hello World",
 		})
 	})
+	subRoutes.Post("/auths/register", s.RegisterUser, util.InputValidatorMiddleware[data.AuthsModel])
+	subRoutes.Post("/auths/login", s.LoginUser, util.InputValidatorMiddleware[data.AuthsModel])
 
 	if err := barf.Beck(); err != nil {
 		barf.Logger().Error(err.Error())

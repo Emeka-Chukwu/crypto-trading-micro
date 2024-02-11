@@ -8,16 +8,16 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func GetBody[T any](r *http.Request) T {
+func GetBody[T any](r *http.Request) (T, error) {
 	var payload T
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
-		return payload
+		return payload, err
 	}
 	if err := json.Unmarshal(body, &payload); err != nil {
-		return payload
+		return payload, err
 	}
-	return payload
+	return payload, err
 }
 
 func GetUrlParams[T any](c *gin.Context) T {

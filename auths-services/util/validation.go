@@ -1,6 +1,7 @@
 package util
 
 import (
+	"bytes"
 	"encoding/json"
 	"io"
 	"net/http"
@@ -61,30 +62,27 @@ func ValidatorMiddleware[T any](w http.ResponseWriter, r *http.Request) {
 func InputValidatorMiddleware[T any](next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		var payload T
-		body, err := io.ReadAll(r.Body)
+		////
+		var buf bytes.Buffer
+		_, err := io.Copy(&buf, r.Body)
 		if err != nil {
-			barf.Response(w).Status(http.StatusBadRequest).JSON(barf.Res{
-				Status:  false,
-				Data:    nil,
-				Message: "error",
-			})
+			barf.Response(w).Status(http.StatusBadRequest).JSON(barf.Res{Status: false, Data: err.Error(), Message: "error"})
+			return
+		}
+		body := buf.Bytes()
+		r.Body = io.NopCloser(&buf)
+		//////
+		if err != nil {
+			barf.Response(w).Status(http.StatusBadRequest).JSON(barf.Res{Status: false, Data: err.Error(), Message: "error"})
 			return
 		}
 		if err := json.Unmarshal(body, &payload); err != nil {
-			barf.Response(w).Status(http.StatusBadRequest).JSON(barf.Res{
-				Status:  false,
-				Data:    nil,
-				Message: "error",
-			})
+			barf.Response(w).Status(http.StatusBadRequest).JSON(barf.Res{Status: false, Data: err.Error(), Message: "error"})
 			return
 		}
 		_, err = ValidateInput(payload)
 		if err != nil {
-			barf.Response(w).Status(http.StatusBadRequest).JSON(barf.Res{
-				Status:  false,
-				Data:    nil,
-				Message: "error",
-			})
+			barf.Response(w).Status(http.StatusBadRequest).JSON(barf.Res{Status: false, Data: err.Error(), Message: "error"})
 			return
 		}
 		next.ServeHTTP(w, r)

@@ -16,11 +16,11 @@ var (
 )
 
 type AuthsModel struct {
-	ID        uuid.UUID
-	FirstName string
-	LastName  string
-	Email     string
-	Password  string
+	ID        uuid.UUID `json:"id"`
+	FirstName string    `json:"first_name" validate:"required"`
+	LastName  string    `json:"last_name" validate:"required"`
+	Email     string    `json:"email" validate:"required,email"`
+	Password  string    `json:"password" validate:"required"`
 	Active    bool
 	CreatedAt time.Time
 	UpdatedAt time.Time
@@ -40,8 +40,8 @@ func (a *authsRepo) RegisterAuths(request AuthsModel) (AuthsModel, error) {
 		return AuthsModel{}, err
 	}
 	var user AuthsModel
-	stmt := `insert into users (email, first_name, last_name, password, user_active, created_at, updated_at)
-		values ($1, $2, $3, $4, $5, $6, $7) returning id, email, first_name, last_name, password, user_active, created_at, updated_at `
+	stmt := `insert into auths (email, first_name, last_name, password, active)
+		values ($1, $2, $3, $4, $5) returning id, email, first_name, last_name, password, active, created_at, updated_at `
 
 	err = a.DB.QueryRowContext(ctx, stmt,
 		request.Email,
@@ -49,8 +49,6 @@ func (a *authsRepo) RegisterAuths(request AuthsModel) (AuthsModel, error) {
 		request.LastName,
 		hashedPassword,
 		request.Active,
-		time.Now(),
-		time.Now(),
 	).Scan(&user.ID,
 		&user.Email,
 		&user.FirstName,

@@ -6,7 +6,9 @@ import (
 	"database/sql"
 	"fmt"
 
-	"github.com/golang-migrate/migrate"
+	"github.com/golang-migrate/migrate/v4"
+	_ "github.com/golang-migrate/migrate/v4/database/postgres"
+	_ "github.com/golang-migrate/migrate/v4/source/file"
 	_ "github.com/lib/pq"
 	"github.com/rs/zerolog/log"
 )
@@ -25,13 +27,15 @@ func main() {
 	}
 
 	/// run db migration
-	// runDBMigration(config.MigrationURL, config.DBSource)
+	runDBMigration(config.MigrationURL, config.DBSource)
 	runBarfServer(config, conn)
 
 }
 
 func runDBMigration(migrationURL string, dbSource string) {
+	fmt.Println(migrationURL, dbSource)
 	migration, err := migrate.New(migrationURL, dbSource)
+	fmt.Println(err, "hererer")
 	if err != nil {
 		log.Fatal().Msgf("cannot create new migrate instance: %w", err)
 	}
